@@ -1,40 +1,38 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Overlay, ModalWindow } from './Modal.styled';
 
-export class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.onKeyDown);
-  }
+export const Modal = ({largeImage, alt , onModalClick }) => {
+  useEffect(() => {
+    const onKeyDown = event => {
+      if (event.code === 'Escape') {
+        onModalClick();
+      }
+    };
 
-  onKeyDown = e => {
-    if (e.code === 'Escape') {
-      this.props.onModalClick();
-    }
-  };
+    window.addEventListener('keydown', onKeyDown);
+    document.body.style.overflow = 'hidden';
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown);
-  }
+    return () => {
+      window.removeEventListener('keydown',onKeyDown);
+      document.body.style.overflow = 'auto';
+    };
+  }, [onModalClick]);
 
-  onBackDropClick = e => {
+  const onBackDropClick = e => {
     if (e.target === e.currentTarget) {
-      this.props.onModalClick();
+      onModalClick();
     }
   };
 
-  render() {
-    const { largeImage, alt } = this.props;
-
-    return (
-      <Overlay onClick={this.onBackDropClick}>
-        <ModalWindow>
-          <img src={largeImage} alt={alt}/>
-        </ModalWindow>
-      </Overlay>
-    );
-  }
-}
+  return (
+    <Overlay onClick={onBackDropClick}>
+      <ModalWindow>
+        <img src={largeImage} alt={alt} />
+      </ModalWindow>
+    </Overlay>
+  );
+};
 
 Modal.propTypes = {
   alt: PropTypes.string.isRequired,
