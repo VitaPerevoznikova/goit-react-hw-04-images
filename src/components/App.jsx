@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { fetchImages, needValues } from './api/api';
 
@@ -16,11 +16,10 @@ import { Modal } from './Modal/Modal';
 import Loader from './Loader/Loader';
 
 export const App = () => {
-  
   const [images, setImages] = useState([]);
   const [searchName, setSearchName] = useState('');
   const [page, setPage] = useState(1);
-  const [errRor, setError] = useState(null);
+  const [Error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
@@ -31,7 +30,7 @@ export const App = () => {
     if (!searchName) {
       return;
     }
-    renderGallery(searchName, page);
+    // renderGallery(searchName, page);
   }, [searchName, page]);
 
   const renderGallery = async () => {
@@ -52,15 +51,15 @@ export const App = () => {
       const newImages = needValues(hits);
 
       setImages([...images, ...newImages]);
-      setTotalHits(totalHits)
-
+      setTotalHits(totalHits);
     } catch (error) {
-      setError(errRor);
+      setError(Error);
       Notiflix.Notify.failure('Oops... Something went wrong');
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const onFormSubmit = searchName => {
     setSearchName(searchName);
