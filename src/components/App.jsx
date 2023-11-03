@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { fetchImages, needValues } from './api/api';
 
@@ -26,12 +26,12 @@ export const App = () => {
   const [tags, setTags] = useState('');
   const [totalHits, setTotalHits] = useState(0);
 
-  useEffect(() => {
-    if (!searchName) {
-      return;
-    }
-    renderGallery(searchName, page);
-  }, [searchName, page]);
+  // useEffect(() => {
+  //   if (!searchName) {
+  //     return;
+  //   }
+  //   renderGallery(searchName, page);
+  // }, [searchName, page]);
 
   const renderGallery = async () => {
     setIsLoading(true);
@@ -59,7 +59,7 @@ export const App = () => {
       setIsLoading(false);
     }
   };
-
+  renderGallery();
 
   const onFormSubmit = searchName => {
     setSearchName(searchName);
