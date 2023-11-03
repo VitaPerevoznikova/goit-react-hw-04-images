@@ -30,7 +30,7 @@ export const App = () => {
     if (!searchName) {
       return;
     }
-    // renderGallery(searchName, page);
+    renderGallery(searchName, page);
   }, [searchName, page]);
 
   const renderGallery = async () => {
