@@ -1,5 +1,5 @@
 import React from 'react';
-import { Component } from 'react';
+import { useState,useEffect } from 'react';
 
 import { fetchImages, needValues } from './api/api';
 
@@ -15,32 +15,27 @@ import { Modal } from './Modal/Modal';
 
 import Loader from './Loader/Loader';
 
-export class App extends Component {
-  state = {
-    images: [],
-    searchName: '',
-    page: 1,
-    error: null,
-    isLoading: false,
-    showModal: false,
-    largeImageURL: '',
-    tags: '',
-  };
+export const App = () => {
+  
+  const [images, setImages] = useState([]);
+  const [searchName, setSearchName] = useState('');
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [largeImageURL, setLargeImageURL] = useState('');
+  const [tags, setTags] = useState('');
+  const [totalHits, setTotalHits] = useState(0);
 
-  componentDidUpdate(_, prevState) {
-    const prevSearchQuery = prevState.searchName;
-    const nextSearchQuery = this.state.searchName;
-    const prevPage = prevState.page;
-    const page = this.state.page;
-
-    if (prevSearchQuery !== nextSearchQuery || prevPage !== page) {
-      this.renderGallery();
+  useEffect(() => {
+    if (!searchName) {
+      return;
     }
-  }
+    renderGallery(searchName, page);
+  }, [searchName, page]);
 
-  renderGallery = async () => {
-    const { searchName, page } = this.state;
-    this.setState({ isLoading: true });
+  const renderGallery = async () => {
+    setIsLoading(true);
 
     try {
       const { hits, totalHits } = await fetchImages(searchName, page);
@@ -56,69 +51,59 @@ export class App extends Component {
       }
       const newImages = needValues(hits);
 
-      this.setState(({ images }) => ({
-        images: [...images, ...newImages],
-        totalHits,
-      }));
-      
+      setImages([...images, ...newImages]);
+      setTotalHits(totalHits)
+
     } catch (error) {
-      this.setState({ error });
+      setError(error);
       Notiflix.Notify.failure('Oops... Something went wrong');
-    
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(false);
     }
   };
 
-  onFormSubmit = searchName => {
-    this.setState({ searchName, images: [], page: 1 });
+  const onFormSubmit = searchName => {
+    setSearchName(searchName);
+    setImages([]);
+    setPage(1);
   };
 
-  openModal = (largeImageURL, tags) => {
-    this.toggleModal();
-    this.setState({
-      largeImageURL,
-      tags,
-    });
+  const openModal = (largeImageURL, tags) => {
+    toggleModal();
+    setLargeImageURL(largeImageURL);
+    setTags(tags);
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
+  const toggleModal = () => {
+    setShowModal(!showModal);
   };
 
-  onLoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
+  const onLoadMore = () => {
+    setPage(prevPage => prevPage + 1);
   };
 
-  render() {
-    const { images, isLoading, totalHits, largeImageURL, tags, showModal } =
-      this.state;
-    const allImages = images.length === totalHits;
+  const allImages = images.length === totalHits;
 
-    return (
-      <>
-        <SearchBar onSubmit={this.onFormSubmit} />
+  return (
+    <>
+      <SearchBar onSubmit={onFormSubmit} />
 
-        <ImageGallery images={images} onOpenModal={this.openModal} />
+      <ImageGallery images={images} onOpenModal={openModal} />
 
-        {isLoading && <Loader />}
-        {images.length !== 0 && !isLoading && !allImages && (
-          <Button onClick={this.onLoadMore} />
-        )}
+      {isLoading && <Loader />}
+      {images.length !== 0 && !isLoading && !allImages && (
+        <Button onClick={onLoadMore} />
+      )}
 
-        {showModal && (
-          <Modal
-            onModalClick={this.toggleModal}
-            largeImage={largeImageURL}
-            alt={tags}
-          />
-        )}
-      </>
-    );
-  }
-}
+      {showModal && (
+        <Modal
+          onModalClick={toggleModal}
+          largeImage={largeImageURL}
+          alt={tags}
+        />
+      )}
+    </>
+  );
+};
+
 export default App;
