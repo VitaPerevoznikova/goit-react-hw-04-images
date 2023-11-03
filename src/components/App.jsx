@@ -20,7 +20,7 @@ export const App = () => {
   const [images, setImages] = useState([]);
   const [searchName, setSearchName] = useState('');
   const [page, setPage] = useState(1);
-  const [error, setError] = useState(null);
+  const [errRor, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
@@ -55,7 +55,7 @@ export const App = () => {
       setTotalHits(totalHits)
 
     } catch (error) {
-      setError(error);
+      setError(errRor);
       Notiflix.Notify.failure('Oops... Something went wrong');
     } finally {
       setIsLoading(false);
