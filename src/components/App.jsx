@@ -97,8 +97,19 @@ export const App = () => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [searchName, page]);
 
-  const onFormSubmit = searchName => {
-    setSearchName(searchName);
+  const onFormSubmit = value => {
+    const searchValue = value.trim().toLowerCase().split(' ').join('+');
+
+      if (searchValue === '') {
+        Notiflix.Notify.failure('Please enter a value to search!');
+        return;
+      }
+      if (searchValue === searchName) {
+        Notiflix.Notify.failure('Enter new request, please!');
+        return;
+      }
+    
+    setSearchName(searchValue);
     setImages([]);
     setPage(1);
   };
@@ -121,7 +132,7 @@ export const App = () => {
 
   return (
     <>
-      <SearchBar onSubmit={onFormSubmit} />
+      <SearchBar onFormSubmit={onFormSubmit} />
 
       <ImageGallery images={images} onOpenModal={openModal} />
 
@@ -130,7 +141,7 @@ export const App = () => {
         <Button onClick={onLoadMore} />
       )}
 
-      {showModal && (
+      {showModal && ( 
         <Modal
           onModalClick={toggleModal}
           largeImage={largeImageURL}
