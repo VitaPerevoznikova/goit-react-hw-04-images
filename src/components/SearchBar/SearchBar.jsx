@@ -1,37 +1,33 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Notiflix from 'notiflix';
 import { BiSearchAlt  } from "react-icons/bi";
 import { Header,SearchFormButton } from './Searchbar.styled';
 
- class SearchBar extends Component {
-  state = {
-    searchName: '',
+ export const SearchBar = ({onSubmit}) => {
+  const [searchName, setSearchName] = useState('');
+
+  const handleChange = event => {
+    setSearchName(event.currentTarget.value);
   };
 
-  handleChange = event => {
-    this.setState({ searchName: event.currentTarget.value });
-  };
-
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    if (this.state.searchName.trim() === '') {
+    if (searchName.trim() === '') {
       Notiflix.Notify.failure('Please enter a value to search!');
       return;
     }
-    this.props.onSubmit(this.state.searchName);
-    this.resetForm();
+    onSubmit(searchName);
+    resetForm();
   };
 
-  resetForm = () => {
-    this.setState({ searchName: '' });
+  const resetForm = () => {
+    setSearchName('');
   };
 
-  render() {
-    const { searchName } = this.state;
     return (
       <Header>
-        <form onSubmit={this.handleSubmit} className="SearchForm">
+        <form onSubmit={handleSubmit} className="SearchForm">
           <SearchFormButton type="submit" className="SearchForm-button">
             {/* <span className="SearchForm-button-label">Search</span>  */}
             <BiSearchAlt style={{ width: 25, height: 25 }} />
@@ -43,14 +39,13 @@ import { Header,SearchFormButton } from './Searchbar.styled';
             autoFocus
             placeholder="Search images and photos"
             name="searchName"
-            onChange={this.handleChange}
+            onChange={handleChange}
             value={searchName}
           />
         </form>
       </Header>
     );
   }
-}
 
 SearchBar.propTypes = {
   onSubmit: PropTypes.func,
