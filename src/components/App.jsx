@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { fetchImages, needValues } from './api/api';
 
@@ -19,7 +18,7 @@ export const App = () => {
   const [images, setImages] = useState([]);
   const [searchName, setSearchName] = useState('');
   const [page, setPage] = useState(1);
-  const [Error, setError] = useState(null);
+  const [errorPage, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
@@ -31,6 +30,7 @@ export const App = () => {
       return;
     }
     renderGallery(searchName, page);
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchName, page]);
 
   const renderGallery = async () => {
@@ -53,13 +53,49 @@ export const App = () => {
       setImages([...images, ...newImages]);
       setTotalHits(totalHits);
     } catch (error) {
-      setError(Error);
+      setError(errorPage);
       Notiflix.Notify.failure('Oops... Something went wrong');
     } finally {
       setIsLoading(false);
     }
   };
-  // renderGallery();
+
+  // N 2
+  // useEffect(() => {
+  //   if (!searchName) {
+  //     return;
+  //   }
+
+  //   const fetchData = async () => {
+  //     setIsLoading(true);
+
+  //     try {
+  //       const { hits, totalHits } = await fetchImages(searchName, page);
+
+  //       if (totalHits === 0) {
+  //         Notiflix.Notify.warning(
+  //           'Sorry, there are no images matching your search query. Please try again.'
+  //         );
+  //       } else if (page === 1) {
+  //         Notiflix.Notify.success(
+  //           `Successfully found ${totalHits} images matching your search query.`
+  //         );
+  //       }
+  //       const newImages = needValues(hits);
+
+  //       setImages(prevImages => [...prevImages, ...newImages]);
+  //       setTotalHits(totalHits);
+  //     } catch (error) {
+  //       setError(errorPage);
+  //       Notiflix.Notify.failure('Oops... Something went wrong');
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [searchName, page]);
 
   const onFormSubmit = searchName => {
     setSearchName(searchName);
